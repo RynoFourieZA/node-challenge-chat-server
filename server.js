@@ -1,5 +1,7 @@
 const express = require("express");
 const cors = require("cors");
+const { response, request } = require("express");
+const PORT = process.env.PORT || 5000;
 
 const app = express();
 
@@ -20,4 +22,16 @@ app.get("/", function (request, response) {
   response.sendFile(__dirname + "/index.html");
 });
 
-app.listen(process.env.PORT);
+// All
+app.get("/messages", (response, request) => {
+  response.send(messages);
+});
+
+// app.post
+app.post("/message", (response, request) => {
+  response.send();
+});
+
+app.listen(PORT, () => {
+  console.log(`Server started on port ${PORT}`);
+});
