@@ -5,6 +5,7 @@ const PORT = process.env.PORT || 5000;
 
 const app = express();
 
+app.use(express.json()); // for parsing application/json
 app.use(cors());
 
 const welcomeMessage = {
@@ -18,20 +19,27 @@ const welcomeMessage = {
 //Note: messages will be lost when Glitch restarts our server.
 const messages = [welcomeMessage];
 
+// All
+app.get("/messages", function (request, response) {
+  response.send(messages);
+});
+
+// Home page
 app.get("/", function (request, response) {
   response.sendFile(__dirname + "/index.html");
 });
 
-// All
-app.get("/messages", (response, request) => {
-  response.send(messages);
+// Create a message
+app.post("/messages", function (request, response) {
+  const newMessage = {
+    id: request.body.id,
+    from: request.body.from,
+    text: request.body.text,
+  };
+  messages.push(newMessage);
+  response.json(messages);
 });
 
-// app.post
-app.post("/message", (response, request) => {
-  response.send();
-});
-
-app.listen(PORT, () => {
+app.listen(PORT, function () {
   console.log(`Server started on port ${PORT}`);
 });
