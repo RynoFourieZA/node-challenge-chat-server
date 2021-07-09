@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const lodash = require("lodash");
+const _ = require("lodash");
 const { response, request } = require("express");
 const PORT = process.env.PORT || 5000;
 
@@ -8,7 +8,7 @@ const app = express();
 
 app.use(express.json()); // for parsing application/json
 app.use(cors());
-app.use(express.urlencoded({ extended: true }))
+app.use(express.urlencoded({ extended: true }));
 
 const welcomeMessage = {
   id: 0,
@@ -34,12 +34,16 @@ app.get("/", function (request, response) {
 // Create a message
 app.post("/messages", function (request, response) {
   const newMessage = {
-    id: lodash.uniqueId(),
+    id: _.uniqueId(),
     from: request.body.from,
     text: request.body.text,
   };
-  messages.push(newMessage);
-  response.json(messages);
+  if(request.body.from !== "" &&  request.body.text !== "") {
+    messages.push(newMessage);
+    response.json(messages);
+  }else {
+    response.status(400).json({ msg: "Name or message can not be empty" })
+  }
 });
 
 // Get message by ID
@@ -56,15 +60,20 @@ app.get("/messages/:id", function (request, response) {
 });
 
 app.delete("/messages/:id", function (request, response) {
-  const {id} = request.params;
-  const match = messages.some(message => message.id === parseInt(id));
-  if(match) {
-    const deleteMessage = messages.filter(message => message.id === parseInt(id))
-    response.json({ msg: `message with id of ${id} is deleted`, messages : deleteMessage}); 
-  }else {
-    response.status(400).json({ msg: `Id of ${id} not found` })
+  const { id } = request.params;
+  const match = messages.some((message) => message.id === parseInt(id));
+  if (match) {
+    const deleteMessage = messages.filter(
+      (message) => message.id === parseInt(id)
+    );
+    response.json({
+      msg: `message with id of ${id} is deleted`,
+      messages: deleteMessage,
+    });
+  } else {
+    response.status(400).json({ msg: `Id of ${id} not found` });
   }
-})
+});
 
 app.listen(PORT, function () {
   console.log(`Server started on port ${PORT}`);
