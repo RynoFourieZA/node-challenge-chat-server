@@ -40,6 +40,21 @@ app.post("/messages", function (request, response) {
   response.json(messages);
 });
 
+// Get message by ID
+app.get("/messages/:id", function (request, response) {
+  const inputId = request.params.id;
+  const found = messages.some((el) => el.id === parseInt(inputId));
+  console.log(inputId);
+  if (found) {
+    const message = messages.filter((el) => el.id === parseInt(inputId));
+    response.json(message);
+  } else {
+    response.status(400).json({ msg: `Id of ${inputId} not found` });
+  }
+});
+
+
+
 app.listen(PORT, function () {
   console.log(`Server started on port ${PORT}`);
 });
